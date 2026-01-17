@@ -1,0 +1,8 @@
+# La section "services" définit les conteneurs gérés par Docker Compose.
+services:
+  web:
+    image: 03_docker_compose
+    build: .            # "Construis l'image à partir du Dockerfile qui est ICI (.)"
+    ports:
+      - "8080:8000"     # "Branche le port 8080 PC sur 8000 Conteneur"
+    container_name: 03_docker_compose_web  # (Optionnel) Nom explicite dans Docker Desktop

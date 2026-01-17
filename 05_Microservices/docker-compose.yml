@@ -1,0 +1,24 @@
+services:
+  # Le Service Backend
+  backend:
+    image: 05_microservices_backend
+    build: ./backend
+    container_name: ${NOM_SERVICE_BACKEND}
+    ports:
+      - "${PORT_BACK_PC}:5000"
+
+  # Le Service Frontend
+  frontend:
+    image: 05_microservices_frontend
+    build: ./frontend
+    container_name: ${NOM_SERVICE_FRONTEND}
+    ports:
+      - "${PORT_FRONT_PC}:8000"
+    depends_on:
+      - backend
+    
+    # C'EST ICI LA MAGIE :
+    environment:
+      # On crée la variable 'URL_DU_BACKEND' pour le script Python
+      # On lui donne la valeur : http://[NOM_DU_CONTAINER_BACKEND]:5000
+      - URL_DU_BACKEND=http://${NOM_SERVICE_BACKEND}:5000

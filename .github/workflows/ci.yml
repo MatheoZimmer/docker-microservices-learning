@@ -1,0 +1,50 @@
+name: CI - Docker Microservices
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Source of truth: build and test exactly what's in the repository.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Reproducible configuration: CI generates a local `.env` from the committed template.
+      # This validates that onboarding is copy/paste friendly and that secrets are not required to run the demo.
+      - name: Prepare environment file
+        working-directory: 05_Microservices
+        run: |
+          test -f .env.example
+          cp .env.example .env
+
+      # Build gate: ensures Dockerfiles + compose configuration are valid and buildable on a clean machine.
+      - name: Build images (compose)
+        working-directory: 05_Microservices
+        run: docker compose build
+
+      # Bring up the stack in detached mode for integration checks.
+      - name: Start stack
+        working-directory: 05_Microservices
+        run: docker compose up -d
+
+      # Minimal integration validation:
+      # - Frontend should be reachable from the host (published port)
+      # - Backend should be reachable as well (published port)
+      # Retries handle cold-start latency on CI runners.
+      - name: Smoke test (frontend + backend)
+        working-directory: 05_Microservices
+        run: |
+          curl --fail --retry 15 --retry-connrefused --retry-delay 2 http://localhost:8000/
+          curl --fail --retry 15 --retry-connrefused --retry-delay 2 http://localhost:5000/
+
+      # Always clean up, even on failure, to keep the runner environment deterministic.
+      - name: Teardown
+        if: always()
+        working-directory: 05_Microservices
+        run: docker compose down --volumes --remove-orphans

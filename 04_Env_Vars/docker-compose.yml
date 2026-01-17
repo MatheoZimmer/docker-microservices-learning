@@ -1,0 +1,11 @@
+services:
+  mon-super-site:
+    build: .
+    image: 04_env_vars
+    # Ici, Docker va lire la valeur dans le .env
+    container_name: ${NOM_DU_CONTAINER}
+    ports:
+      # On branche le port du .env (9090) sur le port interne (8000)
+      - "${PORT_PC}:${PORT_INTERNE}"
+    environment:
+      - PORT=${PORT_INTERNE}
