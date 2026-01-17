@@ -6,6 +6,10 @@ try:
     import os
     print("DEBUG [2/6]: Import os OK", flush=True)
     
+    # On décompose pour voir où ça casse
+    import http
+    print("DEBUG [2.5/6]: Paquet 'http' OK", flush=True)
+    
     import http.server
     print("DEBUG [3/6]: Import http.server OK", flush=True)
     
