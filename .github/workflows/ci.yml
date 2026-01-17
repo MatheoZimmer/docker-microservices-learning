@@ -22,7 +22,8 @@ jobs:
         working-directory: 05_Microservices
         run: |
           test -f .env.example
-          cp .env.example .env
+          # Normalize line endings to avoid CRLF issues on Linux runners.
+          tr -d '\r' < .env.example > .env
 
       # Build gate: ensures Dockerfiles + compose configuration are valid and buildable on a clean machine.
       - name: Build images (compose)
@@ -41,8 +42,10 @@ jobs:
       - name: Smoke test (frontend + backend)
         working-directory: 05_Microservices
         run: |
-          curl --fail --retry 15 --retry-connrefused --retry-delay 2 http://localhost:8000/
-          curl --fail --retry 15 --retry-connrefused --retry-delay 2 http://localhost:5000/
+          docker compose ps
+          curl --fail --retry 25 --retry-all-errors --retry-delay 2 http://localhost:8000/health
+          curl --fail --retry 25 --retry-all-errors --retry-delay 2 http://localhost:5000/health
+          curl --fail --retry 25 --retry-all-errors --retry-delay 2 http://localhost:8000/
 
       # In case of failure, capture logs for debugging.
       - name: Debug - Show Container Logs
