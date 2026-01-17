@@ -1,4 +1,9 @@
 FROM python:3.11-bookworm
+
 WORKDIR /app
+ENV PYTHONUNBUFFERED=1
+
 COPY server.py .
-CMD ["sh", "-c", "python -u server.py || sleep 3600"]
+EXPOSE 8000
+
+CMD ["python", "server.py"]

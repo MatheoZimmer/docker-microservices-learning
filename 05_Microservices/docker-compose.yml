@@ -6,6 +6,11 @@ services:
     container_name: ${NOM_SERVICE_BACKEND}
     ports:
       - "${PORT_BACK_PC}:5000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=2).read()"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
 
   # Le Service Frontend
   frontend:
@@ -15,10 +20,16 @@ services:
     ports:
       - "${PORT_FRONT_PC}:8000"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     
     # C'EST ICI LA MAGIE :
     environment:
       # On crée la variable 'URL_DU_BACKEND' pour le script Python
       # On lui donne la valeur : http://[NOM_DU_CONTAINER_BACKEND]:5000
       - URL_DU_BACKEND=http://${NOM_SERVICE_BACKEND}:5000
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2).read()"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
