@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   test-build:
@@ -42,6 +43,12 @@ jobs:
         run: |
           curl --fail --retry 15 --retry-connrefused --retry-delay 2 http://localhost:8000/
           curl --fail --retry 15 --retry-connrefused --retry-delay 2 http://localhost:5000/
+
+      # In case of failure, capture logs for debugging.
+      - name: Debug - Show Container Logs
+        if: failure() 
+        working-directory: 05_Microservices
+        run: docker compose logs
 
       # Always clean up, even on failure, to keep the runner environment deterministic.
       - name: Teardown

@@ -5,7 +5,13 @@
 ![DevOps](https://img.shields.io/badge/DevOps-111111?logo=azuredevops&logoColor=white)
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-222222?logo=githubactions&logoColor=white)
 
+
+This repository documents my learning journey from Docker basics to Microservices. Comments and documentation are in French to reflect my thought process, but code variables and pipelines follow English industry standards.
+
+---
+
 Ce dépôt documente mon parcours d'apprentissage, de la simple conteneurisation à une architecture microservices orchestrée.
+
 
 ## Progression (01 → 05)
 
